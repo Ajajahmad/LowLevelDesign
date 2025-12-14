@@ -1,4 +1,4 @@
-                - PROBLEM STATEMENT -
+                -** PROBLEM STATEMENT -**
 
 Design a Parking Lot system which books vehicle based on the availability of the size of the vehicle and Charges for based on the parking time.
 
@@ -46,9 +46,8 @@ Design a Parking Lot system which books vehicle based on the availability of the
    Ticket HAS-A Vehicle(Aggregation)
    Ticket HAS-A Payment(Composition)
 
-4. Attributes
+4. Attributes -
    ParkingLot:
-
    - Id
    - Name
    - Address(Optional)
