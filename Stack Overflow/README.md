@@ -116,12 +116,12 @@ Because:
 
 
                                           **RelationShips**
-User -> Question = Aggregation
-User -> Answer = Aggregation
-Question -> Answer = Composition
-Question -> Comment = Composition
-Answer -> Comment = Composition
-User -> Vote = Aggregation
-Question/Answer -> Vote = Aggregation
+1. User -> Question = Aggregation
+2. User -> Answer = Aggregation
+3. Question -> Answer = Composition
+4. Question -> Comment = Composition
+5. Answer -> Comment = Composition
+6. User -> Vote = Aggregation
+7. Question/Answer -> Vote = Aggregation
 
 
