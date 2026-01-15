@@ -113,3 +113,15 @@ Because:
 2. It cannot exist without User
 3. It’s always derived from actions
 4. Storing it separately adds unnecessary complexity
+
+
+                                          **RelationShips**
+User -> Question = Aggregation
+User -> Answer = Aggregation
+Question -> Answer = Composition
+Question -> Comment = Composition
+Answer -> Comment = Composition
+User -> Vote = Aggregation
+Question/Answer -> Vote = Aggregation
+
+
