@@ -137,9 +137,9 @@ Question:
 - Description
 - PostedBy (User)
 - CreatedAt
-- List<Answer>
-- List<Comment>
-- List<Vote>
+- List of Answer
+- List of Comment
+- List of Vote
 - AcceptedAnswerId (optional)
 
 Answer:
@@ -148,8 +148,8 @@ Answer:
 - PostedBy (User)
 - Question
 - CreatedAt
-- List<Comment>
-- List<Vote>
+- List of Comment
+- List of Vote
 - IsAccepted
 
 Comment:
