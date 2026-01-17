@@ -163,3 +163,23 @@ Vote:
 - VoteType (Upvote / Downvote)
 - VotedBy (User)
 - CreatedAt
+
+                        **Rules for Upvotes, downvotes..**
+1. Upvote Question
+- Only registered users can upvote
+- A user cannot upvote their own question
+- Each user can upvote a question only once
+- The question owner's reputation increases (e.g., +10)
+
+2. Downvote Answer
+- Only registered users can downvote
+- A user cannot downvote their own answer
+- Each user can downvote an answer only once
+- The answer owner's reputation decreases (e.g., −2)
+- The user who downvotes also loses some reputation (e.g., −1)
+
+3. Accept Answer
+- Only the question owner can accept an answer
+- Only one answer can be accepted per question
+- The accepted answer is marked as accepted
+- The answer owner's reputation increases (e.g., +15)
