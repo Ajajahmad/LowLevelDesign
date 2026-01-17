@@ -183,3 +183,23 @@ Vote:
 - Only one answer can be accepted per question
 - The accepted answer is marked as accepted
 - The answer owner's reputation increases (e.g., +15)
+
+          **Method for Entity**
+Question:
+- AddAnswer(Answer answer)
+- AddComment(Comment comment)
+- MarkAnswerAsAccepted(Answer answer)
+Answer:
+- AddComment(Comment comment)
+- MarkAsAccepted()
+Vote:
+- ApplyVote()
+
+| Your Method  | Correct Place      |
+| ------------ | ------------------ |
+| PostQuestion | QuestionService    |
+| GetQuestion  | QuestionRepository |
+| VoteQuestion | VoteService        |
+| PostAnswer   | AnswerService      |
+| GetAnswer    | AnswerRepository   |
+| VoteAnswer   | VoteService        |
