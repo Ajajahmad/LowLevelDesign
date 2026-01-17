@@ -124,4 +124,42 @@ Because:
 6. User -> Vote = Aggregation
 7. Question/Answer -> Vote = Aggregation
 
+                      **Attribues**
+   User:
+- Id
+- Name
+- Email
+- Reputation
 
+Question:
+- Id
+- Title
+- Description
+- PostedBy (User)
+- CreatedAt
+- List<Answer>
+- List<Comment>
+- List<Vote>
+- AcceptedAnswerId (optional)
+
+Answer:
+- Id
+- Description
+- PostedBy (User)
+- Question
+- CreatedAt
+- List<Comment>
+- List<Vote>
+- IsAccepted
+
+Comment:
+- Id
+- Text
+- PostedBy (User)
+- CreatedAt
+
+Vote:
+- Id
+- VoteType (Upvote / Downvote)
+- VotedBy (User)
+- CreatedAt
