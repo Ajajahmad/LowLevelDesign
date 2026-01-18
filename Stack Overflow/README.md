@@ -203,3 +203,31 @@ Vote:
 | PostAnswer   | AnswerService      |
 | GetAnswer    | AnswerRepository   |
 | VoteAnswer   | VoteService        |
+
+
+                  **VoteService**
+-**interface Votable**
+- getId()
+- getOwner()
+- addVote(Vote vote)
+Both:
+Question, Answer
+implement Votable.
+
+VoteService:
+- upvote(Votable target, User votedBy)
+- downvote(Votable target, User votedBy)
+
+**What VoteService ACTUALLY Does (Responsibility)**
+-**Validates**:
+-User cannot vote own post
+-User cannot vote twice
+-Creates a Vote
+-Attaches Vote to target
+-Triggers reputation update (via ReputationService)
+
+
+                    **ReputationService**:
+- handleUpvote(Votable target)
+- handleDownvote(Votable target, User votedBy)
+- handleAcceptedAnswer(Answer answer)
