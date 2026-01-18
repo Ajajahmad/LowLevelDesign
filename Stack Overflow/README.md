@@ -231,3 +231,12 @@ VoteService:
 - handleUpvote(Votable target)
 - handleDownvote(Votable target, User votedBy)
 - handleAcceptedAnswer(Answer answer)
+
+                  **CommentService**
+-interface Commentable
+- addComment(Comment comment)
+
+CommentService:
+
+1. addComment(Commentable target, String text, User commentedBy)
+   - creates a comment and attaches it to the target
