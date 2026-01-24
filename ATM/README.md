@@ -65,3 +65,10 @@ Out of scope:
 4. ATM
 5. Transaction
 6. CashDispenser
+
+**Relations -**
+User -> Account = Aggregation
+User -> Card = Aggregation
+Account -> Card = Composition
+ATM -> CashDispenser = Composition
+ATM -> Transaction = Aggregation
