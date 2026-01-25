@@ -1,0 +1,14 @@
+D:\LowLevelDesign\LowLevelDesign\ATM\bin\Debug\net7.0\ATM.exe
+D:\LowLevelDesign\LowLevelDesign\ATM\bin\Debug\net7.0\ATM.deps.json
+D:\LowLevelDesign\LowLevelDesign\ATM\bin\Debug\net7.0\ATM.runtimeconfig.json
+D:\LowLevelDesign\LowLevelDesign\ATM\bin\Debug\net7.0\ATM.dll
+D:\LowLevelDesign\LowLevelDesign\ATM\bin\Debug\net7.0\ATM.pdb
+D:\LowLevelDesign\LowLevelDesign\ATM\obj\Debug\net7.0\ATM.GeneratedMSBuildEditorConfig.editorconfig
+D:\LowLevelDesign\LowLevelDesign\ATM\obj\Debug\net7.0\ATM.AssemblyInfoInputs.cache
+D:\LowLevelDesign\LowLevelDesign\ATM\obj\Debug\net7.0\ATM.AssemblyInfo.cs
+D:\LowLevelDesign\LowLevelDesign\ATM\obj\Debug\net7.0\ATM.csproj.CoreCompileInputs.cache
+D:\LowLevelDesign\LowLevelDesign\ATM\obj\Debug\net7.0\ATM.dll
+D:\LowLevelDesign\LowLevelDesign\ATM\obj\Debug\net7.0\refint\ATM.dll
+D:\LowLevelDesign\LowLevelDesign\ATM\obj\Debug\net7.0\ATM.pdb
+D:\LowLevelDesign\LowLevelDesign\ATM\obj\Debug\net7.0\ATM.genruntimeconfig.cache
+D:\LowLevelDesign\LowLevelDesign\ATM\obj\Debug\net7.0\ref\ATM.dll
