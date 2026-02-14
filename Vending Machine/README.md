@@ -97,3 +97,12 @@ ATTRIBUTES:
 ------VendingMachine
 - slots
 - cashInventory
+
+
+1️⃣ isProductAvailable() - Slot.isAvailable()
+2️⃣ deductStock() - Slot
+3️⃣ addInsertedMoney() - Payment.addMoney()
+4️⃣ calculateChange() - CashInventory.calculateChange()
+5️⃣ dispenseProduct() - Slot.dispense()
+
+
