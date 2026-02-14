@@ -73,27 +73,27 @@ Transaction
 
 
 ATTRIBUTES:
-Product
+---Product
 - productId
 - name
 - price
-Slot
+--------Slot
 - slotId
 - product
 - quantity
-Money
+-------Money
 - denomination
 - type
-CashInventory
+-------CashInventory
 - denominationCountMap
-Payment
+-----Payment
 - insertedAmount
 - insertedDenominations
-Transaction
+------Transaction
 - transactionId
 - product
 - amountPaid
 - status
-VendingMachine
+------VendingMachine
 - slots
 - cashInventory
