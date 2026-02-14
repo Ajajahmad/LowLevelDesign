@@ -70,3 +70,30 @@ Slot (or InventorySlot)
 Money
 Payment
 Transaction
+
+
+ATTRIBUTES:
+Product
+- productId
+- name
+- price
+Slot
+- slotId
+- product
+- quantity
+Money
+- denomination
+- type
+CashInventory
+- denominationCountMap
+Payment
+- insertedAmount
+- insertedDenominations
+Transaction
+- transactionId
+- product
+- amountPaid
+- status
+VendingMachine
+- slots
+- cashInventory
