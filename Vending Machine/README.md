@@ -61,3 +61,12 @@ Expiry dates
 Maintenance mode
 
 Concurrency
+
+
+ENTITIES :
+VendingMachine
+Product
+Slot (or InventorySlot)
+Money
+Payment
+Transaction
