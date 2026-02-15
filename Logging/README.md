@@ -33,3 +33,12 @@ Distributed logging
 Remote streaming
 Structured JSON logs
 Thread safety
+
+
+ENTITIES : 
+LogLevel (enum) - INFOR, WARNING,ERROR
+Logger - check level threshold , , create log event, send to destinations -- Facade/orchestrator role.
+LogMessage (or LogEvent) -- timestamp, message ,level , loggername
+LogDestination (interface)- consoleDestination, FileDestination
+LoggerConfig--- minLevel, destinations ---- Avoid putting config inside Logger directly → SRP.
+
