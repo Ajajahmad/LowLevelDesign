@@ -1,0 +1,14 @@
+D:\LowLevelDesign\LowLevelDesign\Logging\Logging\bin\Debug\net7.0\Logging.exe
+D:\LowLevelDesign\LowLevelDesign\Logging\Logging\bin\Debug\net7.0\Logging.deps.json
+D:\LowLevelDesign\LowLevelDesign\Logging\Logging\bin\Debug\net7.0\Logging.runtimeconfig.json
+D:\LowLevelDesign\LowLevelDesign\Logging\Logging\bin\Debug\net7.0\Logging.dll
+D:\LowLevelDesign\LowLevelDesign\Logging\Logging\bin\Debug\net7.0\Logging.pdb
+D:\LowLevelDesign\LowLevelDesign\Logging\Logging\obj\Debug\net7.0\Logging.GeneratedMSBuildEditorConfig.editorconfig
+D:\LowLevelDesign\LowLevelDesign\Logging\Logging\obj\Debug\net7.0\Logging.AssemblyInfoInputs.cache
+D:\LowLevelDesign\LowLevelDesign\Logging\Logging\obj\Debug\net7.0\Logging.AssemblyInfo.cs
+D:\LowLevelDesign\LowLevelDesign\Logging\Logging\obj\Debug\net7.0\Logging.csproj.CoreCompileInputs.cache
+D:\LowLevelDesign\LowLevelDesign\Logging\Logging\obj\Debug\net7.0\Logging.dll
+D:\LowLevelDesign\LowLevelDesign\Logging\Logging\obj\Debug\net7.0\refint\Logging.dll
+D:\LowLevelDesign\LowLevelDesign\Logging\Logging\obj\Debug\net7.0\Logging.pdb
+D:\LowLevelDesign\LowLevelDesign\Logging\Logging\obj\Debug\net7.0\Logging.genruntimeconfig.cache
+D:\LowLevelDesign\LowLevelDesign\Logging\Logging\obj\Debug\net7.0\ref\Logging.dll
