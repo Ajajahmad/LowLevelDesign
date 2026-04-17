@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
+using System.Runtime.CompilerServices;
 
 enum BookingStatus
 { 
@@ -235,7 +236,7 @@ class NotificationService
         Console.WriteLine($"\n  📧 Notification sent to {booking.User.Email}:");
         Console.WriteLine($"     Booking {booking.BookingId} Confirmed!");
         Console.WriteLine($"     Movie: {booking.Show.Movie.Title}");
-        Console.WriteLine($"     Time: {booking.Show.StartTime}");
+        Console.WriteLine($"     Time: {booking.Show.Starttime}");
         Console.WriteLine($"     Seats: {string.Join(", ", booking.Seats.Select(s => s.SeatNumber))}");
         Console.WriteLine($"     Amount Paid: ₹{booking.TotalAmount}");
     }
@@ -245,12 +246,134 @@ class NotificationService
         Console.WriteLine($"\n  📧 Cancellation notification sent to {booking.User.Email}");
     }
 }
+class BookingService
+{
+    private readonly NotificationService notificationService;
+    private int bookingCounter = 1;
+    private int paymentCounter = 1;
+    public BookingService(NotificationService notificationService)
+    {
+        this.notificationService = notificationService;
+    }
+    public Booking BookSeats(User user, Show show, List<Seat> selectedSeats, IPaymentStrategy paymentStrategy)
+    {
+        Console.WriteLine($"\n🎬 Starting booking for {user.Name}...");
+        var lockedSeats = new List<Seat>();
+        foreach(var seat in selectedSeats)
+        {
+            if(!seat.TryLock(user.UserId))
+            {
+                Console.WriteLine($"  ❌ Seat {seat.SeatNumber} not available. Releasing locked seats...");
+                lockedSeats.ForEach(s => s.ReleaseLock());
+                return null;
+            }
+            lockedSeats.Add(seat);
+            Console.WriteLine($"  🔒 Seat {seat.SeatNumber} locked for {user.Name}");
+        }
+        
+        var booking = new Booking($"BK{bookingCounter++}", user, show, selectedSeats);
+        Console.WriteLine($"  📋 Booking {booking.BookingId} created with status: Pending");
+        Console.WriteLine($"  💰 Total Amount: ₹{booking.TotalAmount}");
+
+        var payment = new Payment($"PAY{paymentCounter++}", booking.TotalAmount);
+        bool paymentSuccess = paymentStrategy.Pay(booking.TotalAmount);
+
+        if (paymentSuccess)
+        {
+            // Step 4: Confirm booking
+            payment.MarkSuccess();
+            booking.Confirm(payment);
+            selectedSeats.ForEach(s => s.MarkBooked());
+            Console.WriteLine($"  ✅ Payment successful! Booking Confirmed.");
+            notificationService.SendConfirmation(booking);
+        }
+        else
+        {
+            // Step 5: Fail and release
+            payment.MarkFailed();
+            booking.Fail();
+            selectedSeats.ForEach(s => s.ReleaseLock());
+            Console.WriteLine($"  ❌ Payment failed. Seats released.");
+        }
+
+        return booking;
+    }
+    public void CancelBooking(Booking booking)
+    {
+        if (booking.Status != BookingStatus.Confirmed)
+        {
+            Console.WriteLine("  ⚠️ Only confirmed bookings can be cancelled.");
+            return;
+        }
+        var hoursBefore = (booking.Show.Starttime - DateTime.UtcNow).TotalHours;
+        booking.Cancel();
+        booking.Seats.ForEach(s => s.ReleaseLock());
+        if (hoursBefore >= 24)
+            Console.WriteLine($"  ✅ Booking {booking.BookingId} cancelled. Full refund processed.");
+        else
+            Console.WriteLine($"  ✅ Booking {booking.BookingId} cancelled. No refund (less than 24hrs).");
+
+        notificationService.SendCancellation(booking);
+    }
+}
 
 class Program
 {
     static void Main()
     {
-        Console.WriteLine("AJAJ");
+        var movie = new Movie("M1", "Pushpa 2", "Action", 180);
+        var theatre = new Theatre("T1", "PVR Cinemas", "Hyderabad");
+
+        var screen = new Screen("sc1", "Screen 1");
+        screen.AddSeat(new Seat("s1", "A1", SeatType.Gold, 250));
+        screen.AddSeat(new Seat("S2", "A2", SeatType.Gold, 250));
+        screen.AddSeat(new Seat("S3", "A3", SeatType.Platinum, 400));
+        screen.AddSeat(new Seat("S4", "A4", SeatType.Silver, 150));
+        theatre.AddScreen(screen);
+
+        var show = new Show("SH1", movie, screen, DateTime.UtcNow.AddHours(5), 250);
+        screen.AddShow(show);
+        var user1 = new User("U1", "Ajaj", "ajaj@email.com", "9999999999");
+        var user2 = new User("U2", "Rahul", "rahul@email.com", "8888888888");
+
+        var notificationService = new NotificationService();
+        var bookingService = new BookingService(notificationService);
+
+        Console.WriteLine("========================================"); 
+        Console.WriteLine("   MOVIE TICKET BOOKING SYSTEM");
+        Console.WriteLine("========================================");
+
+
+        Console.WriteLine($"\n🎭 Available seats for {movie.Title}:");
+        show.GetAvailableSeats().ForEach(s =>
+            Console.WriteLine($"   Seat {s.SeatNumber} | {s.Type} | ₹{s.Price}"));
+
+        Console.WriteLine("\n--- User 1 (Ajaj) booking A1, A2 ---");
+        var seatsForUser1 = new List<Seat> { screen.Seats[0], screen.Seats[1] };
+        var booking1 = bookingService.BookSeats(user1, show, seatsForUser1, new UPIPayment());
+
+        Console.WriteLine("\n--- User 2 (Rahul) trying A1 (taken) + A3 ---");
+        var seatsForUser2 = new List<Seat> { screen.Seats[0], screen.Seats[2] };
+        var booking2 = bookingService.BookSeats(user2, show, seatsForUser2, new CreditCardPayment());
+
+
+        Console.WriteLine("\n--- User 2 (Rahul) booking only A3 ---");
+        var seatsForUser2Retry = new List<Seat> { screen.Seats[2] };
+        var booking3 = bookingService.BookSeats(user2, show, seatsForUser2Retry, new CreditCardPayment());
+
+        Console.WriteLine($"\n🎭 Remaining available seats:");
+        var remaining = show.GetAvailableSeats();
+        if (remaining.Any())
+            remaining.ForEach(s => Console.WriteLine($"   Seat {s.SeatNumber} | {s.Type} | ₹{s.Price}"));
+        else
+            Console.WriteLine("   No seats available.");
+
+        Console.WriteLine("\n--- Ajaj cancels his booking ---");
+        bookingService.CancelBooking(booking1);
+
+        Console.WriteLine($"\n🎭 Available seats after cancellation:");
+        show.GetAvailableSeats().ForEach(s =>
+            Console.WriteLine($"   Seat {s.SeatNumber} | {s.Type} | ₹{s.Price}"));
     }
 
 }
