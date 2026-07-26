@@ -1,4 +1,6 @@
-﻿public enum BookStatus
+﻿using System.Reflection.Metadata.Ecma335;
+
+public enum BookStatus
 {
     Available,
     Borrowed,
@@ -17,6 +19,7 @@ public class User
     public int Id { get; set; }
     public string Name { get; set; }
     public string Email { get; set; }
+    public List<BookCopy> BorrowedBooks { get; set; } = new List<BookCopy>();
 
     public User(int id, string name, string email)
     {
@@ -114,5 +117,68 @@ public class BorrowRecord
 
         int overdueDays = (int)(this.ReturnDate.Value - this.DueDate).TotalDays;
         return overdueDays * 10;
+    }
+}
+
+public class LibraryService
+{
+    private List<Book> _books = new List<Book>();
+    private List<BorrowRecord> _borrowRecords = new List<BorrowRecord>();
+
+    public Book SearchBook(string title)
+    {
+        Book book = _books.FirstOrDefault(b => b.Title == title);
+        if (book == null)
+            throw new Exception("Book not found!");
+        return book;
+    }
+
+    public BorrowRecord BorrowBook(User user, Book book)
+    {
+        if (user.BorrowedBooks.Count >= 5)
+            throw new Exception("Max 5 books limit reached!");
+
+        BookCopy copy = book.GetAvailableCopy();
+        if (copy == null)
+        {
+            AddToWaitlist(user, book);
+            throw new Exception("No copy available. Added to waitlist!");
+        }
+
+        copy.MarkBorrowed();
+        user.BorrowedBooks.Add(copy);
+
+        BorrowRecord br = new BorrowRecord(new Random().Next(), user, copy);
+        _borrowRecords.Add(br);
+        return br;
+    }
+
+    public void ReturnBook(BorrowRecord br)
+    {
+        br.ReturnBook();
+        br.BookCopy.MarkReturned();
+        br.User.BorrowedBooks.Remove(br.BookCopy);
+        NotifyWaitlist(br.BookCopy.ParentBook);
+    }
+
+    public int PayFine(User user, BorrowRecord br)
+    {
+        if (br.User != user)
+            throw new Exception("Incorrect user!");
+        return br.CalculateFine();
+    }
+
+    public void AddToWaitlist(User user, Book book)
+    {
+        book.Waitlist.Enqueue(user);
+    }
+
+    private void NotifyWaitlist(Book book)
+    {
+        if (book.Waitlist.Count > 0)
+        {
+            User nextUser = book.Waitlist.Dequeue();
+            Console.WriteLine($"Notifying {nextUser.Name} — '{book.Title}' is now available!");
+        }
     }
 }
