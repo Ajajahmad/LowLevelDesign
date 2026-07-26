@@ -1,11 +1,11 @@
-﻿enum BookStatus
+﻿public enum BookStatus
 {
     Available,
     Borrowed,
     Damaged
 }
 
-enum BorrowStatus
+public enum BorrowStatus
 {
     Active,
     Returned,
