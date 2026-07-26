@@ -67,3 +67,52 @@ public class Book
     public BookCopy GetAvailableCopy()
         => Copies.FirstOrDefault(copy => copy.IsAvailable());
 }
+public class BorrowRecord
+{
+    public int Id { get; set; }
+    public User User { get; set; }
+    public BookCopy BookCopy { get; set; }
+    public BorrowStatus Status { get; private set; }
+    public DateTime BorrowDate { get; set; }
+    public DateTime DueDate { get; set; }
+    public DateTime? ReturnDate { get; set; }
+
+    public BorrowRecord(int id, User user, BookCopy copy)
+    {
+        this.Id = id;
+        this.User = user;
+        this.BookCopy = copy;
+        this.Status = BorrowStatus.Active;
+        this.BorrowDate = DateTime.Now;
+        this.DueDate = this.BorrowDate.AddDays(15);
+        this.ReturnDate = null;
+    }
+
+    public void UpdateStatus(BorrowStatus status)
+    {
+        this.Status = status;
+    }
+
+    public bool IsOverdue()
+    {
+        return DateTime.Now > this.DueDate;
+    }
+
+    public void ReturnBook()
+    {
+        this.ReturnDate = DateTime.Now;
+        if (IsOverdue())
+            UpdateStatus(BorrowStatus.Overdue);
+        else
+            UpdateStatus(BorrowStatus.Returned);
+    }
+
+    public int CalculateFine()
+    {
+        if (ReturnDate == null || !IsOverdue())
+            return 0;
+
+        int overdueDays = (int)(this.ReturnDate.Value - this.DueDate).TotalDays;
+        return overdueDays * 10;
+    }
+}
