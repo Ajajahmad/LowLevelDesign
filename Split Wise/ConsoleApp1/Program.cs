@@ -123,4 +123,5 @@ public class PercentageSplitStrategy : ISplitStrategy
             throw new Exception("Percentages do not add up to 100!");
 
         return users.Select(u => new Split(u, amount * _percentages[u] / 100)).ToList();
- 
+    }
+}
