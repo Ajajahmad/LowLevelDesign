@@ -1,14 +1,12 @@
-﻿
-public enum SplitType
-{
-    Equal,
-    Exact,
-    Percentage
-}
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public enum SplitType { Equal, Exact, Percentage }
 
 public class User
 {
-    public int Id { get; set; } 
+    public int Id { get; set; }
     public string Name { get; set; }
     public string Email { get; set; }
     public Dictionary<User, double> Balance { get; set; }
@@ -18,17 +16,19 @@ public class User
         Id = id;
         Name = name;
         Email = email;
-        this.Balance = new Dictionary<User, double>();
+        Balance = new Dictionary<User, double>();
     }
 }
+
 public class Split
 {
-    public User User;
-    public double Amount;
+    public User User { get; set; }
+    public double Amount { get; set; }
+
     public Split(User user, double amount)
     {
-        this.User = user;
-        this.Amount = amount;
+        User = user;
+        Amount = amount;
     }
 }
 
@@ -42,17 +42,18 @@ public class Expense
     public DateTime CreatedAt { get; set; }
     public List<Split> Splits { get; set; }
 
-    public Expense(int id, string description, double amount, User PaidBy, SplitType type)
+    public Expense(int id, string description, double amount, User paidBy, SplitType type)
     {
-        this.Id = id;
-        this.Description = description;
-        this.Amount = amount;
-        this.PaidBy = PaidBy;
-        this.SplitType = type;
-        this.Splits = new List<Split>();
-        this.CreatedAt = DateTime.Now;
+        Id = id;
+        Description = description;
+        Amount = amount;
+        PaidBy = paidBy;
+        SplitType = type;
+        Splits = new List<Split>();
+        CreatedAt = DateTime.Now;
     }
 }
+
 public class Group
 {
     public int Id { get; set; }
@@ -60,26 +61,21 @@ public class Group
     public List<User> Users { get; set; }
     public List<Expense> Expenses { get; set; }
 
-    public Group(int id, String name)
+    public Group(int id, string name)
     {
-        this.Id = id;
-        this.GroupName = name;
-        this.Users = new List<User>();
-        this.Expenses = new List<Expense>();
+        Id = id;
+        GroupName = name;
+        Users = new List<User>();
+        Expenses = new List<Expense>();
     }
-    public void AddUser(User user)
-    {
-        Users.Add(user);
-    }
-    public void AddExpense(Expense expense)
-    {
-        Expenses.Add(expense);
-    }
+
+    public void AddUser(User user) => Users.Add(user);
+    public void AddExpense(Expense expense) => Expenses.Add(expense);
 }
 
 public interface ISplitStrategy
 {
-    public List<Split> Calculate(double amount, List<User> users);
+    List<Split> Calculate(double amount, List<User> users);
 }
 
 public class EqualSplitStrategy : ISplitStrategy
@@ -94,19 +90,21 @@ public class EqualSplitStrategy : ISplitStrategy
 public class ExactSplitStrategy : ISplitStrategy
 {
     private Dictionary<User, double> _exactAmounts;
-    public ExactSplitStrategy(Dictionary<User, double> exactAmount)
+
+    public ExactSplitStrategy(Dictionary<User, double> exactAmounts)
     {
-        _exactAmounts = exactAmount;
+        _exactAmounts = exactAmounts;
     }
 
     public List<Split> Calculate(double amount, List<User> users)
     {
         double total = _exactAmounts.Values.Sum();
-        if(total != amount)
+        if (total != amount)
             throw new Exception("Exact amounts do not add up to total!");
         return users.Select(u => new Split(u, _exactAmounts[u])).ToList();
     }
 }
+
 public class PercentageSplitStrategy : ISplitStrategy
 {
     private Dictionary<User, double> _percentages;
@@ -121,65 +119,45 @@ public class PercentageSplitStrategy : ISplitStrategy
         double total = _percentages.Values.Sum();
         if (total != 100)
             throw new Exception("Percentages do not add up to 100!");
-
         return users.Select(u => new Split(u, amount * _percentages[u] / 100)).ToList();
     }
 }
-
 
 public class SplitwiseService
 {
     private List<Group> _groups = new List<Group>();
 
-    public void AddGroup(Group group)
-    {
-        _groups.Add(group);
-    }
+    public void AddGroup(Group group) => _groups.Add(group);
 
-    public void AddExpense(Group group, Expense expense, ISplitStrategy strategy)
+    public void AddExpense(Group group, Expense expense,
+                           ISplitStrategy strategy, List<User> users = null)
     {
-        // Step 1 — Strategy se splits calculate karo
-        List<Split> splits = strategy.Calculate(expense.Amount,
-                                                 group.Users);
+        List<User> splitUsers = users ?? group.Users;
 
-        // Step 2 — Splits expense mein store karo
+        List<Split> splits = strategy.Calculate(expense.Amount, splitUsers);
         expense.Splits = splits;
 
-        // Step 3 — Balance update karo
         foreach (Split split in splits)
         {
-            // Payer khud ko pay nahi karega
-            if (split.User == expense.PaidBy)
-                continue;
+            if (split.User == expense.PaidBy) continue;
 
-            // split.User → PaidBy ko dena hai
             if (!split.User.Balance.ContainsKey(expense.PaidBy))
                 split.User.Balance[expense.PaidBy] = 0;
-
             split.User.Balance[expense.PaidBy] += split.Amount;
 
-            // PaidBy → split.User se lena hai
             if (!expense.PaidBy.Balance.ContainsKey(split.User))
                 expense.PaidBy.Balance[split.User] = 0;
-
             expense.PaidBy.Balance[split.User] -= split.Amount;
         }
 
-        // Step 4 — Group mein expense add karo
         group.AddExpense(expense);
-
         Console.WriteLine($"Expense '{expense.Description}' of Rs.{expense.Amount} added!");
     }
 
     public void GetBalance(User user)
     {
         Console.WriteLine($"\n--- {user.Name} ka Balance ---");
-
-        if (user.Balance.Count == 0)
-        {
-            Console.WriteLine("Sab settled up hai!");
-            return;
-        }
+        if (user.Balance.Count == 0) { Console.WriteLine("Sab settled up!"); return; }
 
         foreach (var entry in user.Balance)
         {
@@ -188,7 +166,7 @@ public class SplitwiseService
             else if (entry.Value < 0)
                 Console.WriteLine($"{entry.Key.Name} owes {user.Name}: Rs.{Math.Abs(entry.Value)}");
             else
-                Console.WriteLine($"{user.Name} aur {entry.Key.Name} settled up hain!");
+                Console.WriteLine($"{user.Name} & {entry.Key.Name} settled!");
         }
     }
 
@@ -201,15 +179,14 @@ public class SplitwiseService
         }
 
         double amount = payer.Balance[receiver];
-
-        // Balance zero karo dono ka
         payer.Balance[receiver] = 0;
-        receiver.Balance[payer] = 0;
+
+        if (receiver.Balance.ContainsKey(payer))
+            receiver.Balance[payer] = 0;
 
         Console.WriteLine($"{payer.Name} ne {receiver.Name} ko Rs.{amount} settle kiya!");
     }
 }
-
 
 public class SplitwiseSystem
 {
@@ -227,44 +204,34 @@ public class SplitwiseSystem
         group.AddUser(rahul);
         group.AddUser(priya);
         group.AddUser(rohan);
-
         service.AddGroup(group);
 
-        // Test 1 — Equal Split
         Console.WriteLine("=== Equal Split ===");
         Expense expense1 = new Expense(1, "Restaurant", 1200, ajaj, SplitType.Equal);
         service.AddExpense(group, expense1, new EqualSplitStrategy());
-
         service.GetBalance(ajaj);
         service.GetBalance(rahul);
 
-        // Test 2 — Exact Split
         Console.WriteLine("\n=== Exact Split ===");
         var exactAmounts = new Dictionary<User, double>
         {
-            { ajaj,  500 },
-            { rahul, 300 },
-            { priya, 400 }
+            { ajaj, 500 }, { rahul, 300 }, { priya, 400 }
         };
+        var exactUsers = new List<User> { ajaj, rahul, priya };
         Expense expense2 = new Expense(2, "Hotel", 1200, priya, SplitType.Exact);
-        service.AddExpense(group, expense2, new ExactSplitStrategy(exactAmounts));
-
+        service.AddExpense(group, expense2, new ExactSplitStrategy(exactAmounts), exactUsers);
         service.GetBalance(priya);
 
-        // Test 3 — Percentage Split
         Console.WriteLine("\n=== Percentage Split ===");
         var percentages = new Dictionary<User, double>
         {
-            { ajaj,  50 },
-            { rahul, 25 },
-            { rohan, 25 }
+            { ajaj, 50 }, { rahul, 25 }, { rohan, 25 }
         };
+        var percentageUsers = new List<User> { ajaj, rahul, rohan };
         Expense expense3 = new Expense(3, "Cab", 800, rahul, SplitType.Percentage);
-        service.AddExpense(group, expense3, new PercentageSplitStrategy(percentages));
-
+        service.AddExpense(group, expense3, new PercentageSplitStrategy(percentages), percentageUsers);
         service.GetBalance(rahul);
 
-        // Test 4 — Settle Up
         Console.WriteLine("\n=== Settle Up ===");
         service.SettleUp(rahul, ajaj);
         service.GetBalance(rahul);
